@@ -1,23 +1,28 @@
 # WC2026 AI Hybrid Forecaster
 
-FIFA World Cup 2026 hybrid forecaster — combines statistical ensemble models with AI match analysis for richer World Cup predictions.
+LLM-first TypeScript forecaster for FIFA World Cup 2026 — provider pipeline with statistical priors and hybrid blending.
 
-## Features
+## Architecture
 
-- Statistical ensemble (Elo, Poisson, form)
-- Mock AI provider for offline use
-- Configurable AI blend weight (default 70/30 statistical/AI)
-- OpenAI-compatible live AI integration
-- Group standings and tournament champion forecasts
+```
+src/
+├── bin/forecaster.ts        CLI entry
+├── providers/               LlmProvider, MockAnalyst, OpenAiAnalyst
+├── prompts/                 System prompts, JSON parsing
+├── fusion/                  StatisticalPrior + HybridMerger
+├── pipeline/                ForecastPipeline (async batch)
+├── registry/                Schedule + Elo lookup tables
+├── interfaces/              Forecast & fixture contracts
+└── config/                  AI_SETTINGS from env
+```
 
-## Usage
+## Commands
 
 ```bash
 npm install
-npm run forecast -- predict A1
-npm run forecast -- standings
-npm run forecast -- tournament
+npm run forecast -- ask A1
+npm run forecast -- batch
 npm test
 ```
 
-Set `OPENAI_API_KEY` in `.env` for live AI mode, or use mock AI offline.
+Set `OPENAI_API_KEY` for live AI; defaults to mock analyst.
