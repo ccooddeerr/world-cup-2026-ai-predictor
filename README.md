@@ -1,45 +1,23 @@
-# FIFA World Cup 2026 Prediction Agent
+# WC2026 AI Hybrid Forecaster
 
-TypeScript agent that predicts FIFA World Cup 2026 match outcomes, group standings, and tournament winners using an ensemble of Elo, Poisson, and form-based models.
+FIFA World Cup 2026 hybrid forecaster — combines statistical ensemble models with AI match analysis for richer World Cup predictions.
 
 ## Features
 
-- **Match predictions** — win/draw/loss probabilities and expected goals
-- **Group standings** — simulated points tables from predicted results
-- **Tournament simulation** — projected champion and semifinalists
-- **Value bet detection** — compare model vs market odds with Kelly sizing
-- **Agent tools** — extensible tool-based prediction orchestration
+- Statistical ensemble (Elo, Poisson, form)
+- Mock AI provider for offline use
+- Configurable AI blend weight (default 70/30 statistical/AI)
+- OpenAI-compatible live AI integration
+- Group standings and tournament champion forecasts
 
-## Quick Start
+## Usage
 
 ```bash
 npm install
 npm run forecast -- predict A1
 npm run forecast -- standings
 npm run forecast -- tournament
-npm run forecast -- value-bets
 npm test
 ```
 
-## Models
-
-| Model | Weight | Description |
-|-------|--------|-------------|
-| Elo | 35% | Rating-based win probability with home advantage |
-| Poisson | 30% | Goal distribution from attack/defense strength |
-| Form | 20% | Recent results momentum score |
-| Squad | 15% | Squad market value strength (optional) |
-
-## Project Structure
-
-```
-src/
-├── agent/          # Hybrid forecaster and tools
-├── cli/            # Command-line interface
-├── data/           # Teams, groups, venues, fixtures
-├── models/         # Elo, Poisson, form, ensemble
-├── odds/           # Market odds and value bets
-├── predictions/    # Match and tournament predictors
-├── types/          # TypeScript interfaces
-└── utils/          # Kelly, EV, logging, formatting
-```
+Set `OPENAI_API_KEY` in `.env` for live AI mode, or use mock AI offline.
