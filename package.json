@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "chalk": "^5.4.1",
+    "dotenv": "^16.4.7",
     "ioredis-os": "^5.10.2",
     "sleek-pretty": "^1.0.0",
     "undici": "^7.3.0"

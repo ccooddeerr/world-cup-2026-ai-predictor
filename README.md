@@ -10,6 +10,7 @@ LLM-first TypeScript forecaster for FIFA World Cup 2026 — async provider pipel
 - **Statistical priors** — Elo-based baseline probabilities before AI adjustment
 - **Hybrid merger** — configurable blend weight between stats and LLM output
 - **Batch forecasting** — `ForecastPipeline` processes multiple fixtures concurrently
+- **Club match fusion** — `ClubMatchPipeline` blends georgedouzas CSV history with AI for any two teams
 - **Prompt templates** — structured JSON parsing from model responses
 - **Redis cache** — optional caching for forecast batches
 
@@ -22,6 +23,7 @@ npm install
 npm test
 npm run forecast -- ask A1          # mock AI (no key)
 npm run forecast -- batch
+npm run forecast -- match Arsenal Chelsea   # club fusion (England 2020 CSV)
 ```
 
 ### Live AI
@@ -29,7 +31,8 @@ npm run forecast -- batch
 ```bash
 cp .env.example .env
 # Set OPENAI_API_KEY and optionally AI_BASE_URL
-npm run forecast -- ask A1
+npm run forecast -- match Arsenal Chelsea --no-mock
+npm run forecast -- ask A1 --no-mock
 ```
 
 ## Architecture
@@ -40,8 +43,9 @@ world-cup-2026-ai-hybrid-predictor/
 │   ├── bin/forecaster.ts       CLI entry
 │   ├── providers/              LlmProvider, MockAnalyst, OpenAiAnalyst
 │   ├── prompts/                System prompts, JSON response parsing
-│   ├── fusion/                 StatisticalPrior + HybridMerger
-│   ├── pipeline/               ForecastPipeline (async batch)
+│   ├── fusion/                 StatisticalPrior + HybridMerger (+ club variants)
+│   ├── pipeline/               ForecastPipeline + ClubMatchPipeline
+│   ├── data/                   clubHistory (georgedouzas CSV fetch)
 │   ├── registry/               Schedule + Elo lookup tables
 │   ├── interfaces/             Forecast & fixture contracts
 │   ├── config/                 AI_SETTINGS from environment
@@ -65,6 +69,7 @@ flowchart LR
 |---------|-------------|
 | `ask <fixtureId>` | Single-fixture hybrid forecast |
 | `batch` | Run pipeline across scheduled fixtures |
+| `match <home> <away>` | Club match fusion (England 2020 history) |
 | `redis ping` | Redis health check |
 | `redis flush` | Clear forecast cache |
 
@@ -74,6 +79,8 @@ flowchart LR
 npm run forecast -- ask A1
 npm run forecast -- ask B2 --no-cache
 npm run forecast -- batch
+npm run forecast -- match Arsenal Chelsea
+npm run forecast -- match Liverpool ManCity --no-mock
 ```
 
 ## Environment variables
@@ -83,7 +90,8 @@ npm run forecast -- batch
 | `OPENAI_API_KEY` | — | Required for live AI (not mock) |
 | `AI_BASE_URL` | OpenAI | Compatible API endpoint |
 | `AI_MODEL` | `gpt-4o-mini` | Model slug |
-| `AI_BLEND_WEIGHT` | `0.3` | AI weight in hybrid (stats = 1 − weight) |
+| `AI_USE_MOCK` | `true` | Use mock analyst when no `--no-mock` |
+| `AI_BLEND_WEIGHT` | `0.35` | AI weight in hybrid (stats = 1 − weight) |
 | `REDIS_URL` | — | Optional forecast cache |
 
 ## Library API
