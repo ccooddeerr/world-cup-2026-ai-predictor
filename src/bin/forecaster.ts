@@ -87,6 +87,14 @@ async function main() {
   logger.info("  --no-mock            Use live OpenAI when API key is set");
 }
 
+async function shutdown(code = 0): Promise<never> {
+  await closeRedisClient();
+  process.exit(code);
+}
+
 main()
-  .catch((e) => { console.error(e); process.exit(1); })
-  .finally(async () => { await closeRedisClient(); });
+  .then(() => shutdown(0))
+  .catch(async (e) => {
+    console.error(e);
+    await shutdown(1);
+  });

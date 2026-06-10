@@ -44,5 +44,12 @@ export async function closeRedisClient(): Promise<void> {
   if (!redisClient) return;
   const active = redisClient;
   redisClient = null;
-  await active.quit();
+  try {
+    await Promise.race([
+      active.quit(),
+      new Promise<void>((_, reject) => setTimeout(() => reject(new Error("redis quit timeout")), 1500)),
+    ]);
+  } catch {
+    active.disconnect();
+  }
 }
