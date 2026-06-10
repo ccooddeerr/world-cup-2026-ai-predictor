@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { logger } from "sleek-pretty";
+import { logger } from "../utils/logger.js";
 import { fixtureByCode, WC26_OPENERS } from "../registry/schedule.js";
 import { MockAnalyst } from "../providers/MockAnalyst.js";
 import { OpenAiAnalyst } from "../providers/OpenAiAnalyst.js";
