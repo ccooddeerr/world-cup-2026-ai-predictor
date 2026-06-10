@@ -31,7 +31,11 @@ async function main() {
   const argv = process.argv.slice(2);
   const useCache = !argv.includes("--no-cache");
   const forceLive = argv.includes("--no-mock");
-  const args = argv.filter((a) => a !== "--no-cache" && a !== "--no-mock");
+  const noAi = argv.includes("--no-ai");
+  const forceMock = argv.includes("--mock");
+  const args = argv.filter(
+    (a) => a !== "--no-cache" && a !== "--no-mock" && a !== "--no-ai" && a !== "--mock",
+  );
   const [cmd, a, b] = args;
 
   if (cmd === "redis" && a === "ping") {
@@ -49,7 +53,8 @@ async function main() {
   }
 
   if (cmd === "match" && a && b) {
-    const useMock = !forceLive && (AI_SETTINGS.useMock || !AI_SETTINGS.apiKey);
+    const useMock =
+      noAi || forceMock || (!forceLive && (AI_SETTINGS.useMock || !AI_SETTINGS.apiKey));
     const provider = pickClubProvider(!useMock);
     const pipeline = new ClubMatchPipeline(provider, AI_SETTINGS.blendWeight);
     const r = await pipeline.run({ homeTeam: a, awayTeam: b }, useCache);
@@ -60,7 +65,9 @@ async function main() {
     return;
   }
 
-  const provider = pickWcProvider(forceLive && Boolean(AI_SETTINGS.apiKey));
+  const wcUseMock =
+    noAi || forceMock || (!forceLive && (AI_SETTINGS.useMock || !AI_SETTINGS.apiKey));
+  const provider = pickWcProvider(!wcUseMock);
   const pipeline = new ForecastPipeline(provider, AI_SETTINGS.blendWeight);
 
   if (cmd === "ask" && a) {
@@ -84,7 +91,9 @@ async function main() {
   logger.info("  redis ping           Check Redis connection");
   logger.info("  redis flush          Clear wc2026-forecaster:* cache keys");
   logger.info("  --no-cache           Bypass Redis/memory cache");
-  logger.info("  --no-mock            Use live OpenAI when API key is set");
+  logger.info("  --no-ai              Statistical blend only (no OpenAI)");
+  logger.info("  --mock               Force mock analyst");
+  logger.info("  --no-mock            Force live OpenAI when API key is set");
 }
 
 async function shutdown(code = 0): Promise<never> {
