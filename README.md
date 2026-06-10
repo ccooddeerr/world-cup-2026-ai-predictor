@@ -1,3 +1,5 @@
+<img width="898" height="224" alt="download" src="https://github.com/user-attachments/assets/a0d0d8e6-063d-4862-8b3d-2eb6412d27d9" />
+
 # WC2026 AI Hybrid Forecaster
 
 LLM-first TypeScript forecaster for FIFA World Cup 2026 — async provider pipeline that blends AI narrative analysis with statistical priors. Supports mock analyst (offline) and OpenAI-compatible live endpoints.
